@@ -1,12 +1,23 @@
 import * as React from "react";
-import { Edit, SimpleForm, EditProps, TextInput } from "react-admin";
+import {
+  Edit,
+  SimpleForm,
+  EditProps,
+  NumberInput,
+  TextInput,
+} from "react-admin";
 
 export const ProductEdit = (props: EditProps): React.ReactElement => {
   return (
     <Edit {...props}>
       <SimpleForm>
         <div />
+        <div />
+        <NumberInput label="discountedPrice" source="discountedPrice" />
+        <div />
         <TextInput label="title" source="title" />
+        <NumberInput label="titlePrice" source="titlePrice" />
+        <div />
       </SimpleForm>
     </Edit>
   );

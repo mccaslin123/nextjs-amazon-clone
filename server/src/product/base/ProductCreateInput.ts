@@ -12,12 +12,19 @@ https://docs.amplication.com/how-to/custom-code
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsJSONValue } from "../../validators";
-import { IsOptional, IsString } from "class-validator";
 import { GraphQLJSON } from "graphql-type-json";
 import { InputJsonValue } from "../../types";
+import { IsOptional, IsNumber, IsString } from "class-validator";
 
 @InputType()
 class ProductCreateInput {
+  @ApiProperty({
+    required: true,
+  })
+  @IsJSONValue()
+  @Field(() => GraphQLJSON)
+  colors!: InputJsonValue;
+
   @ApiProperty({
     required: false,
   })
@@ -30,11 +37,41 @@ class ProductCreateInput {
 
   @ApiProperty({
     required: true,
+    type: Number,
+  })
+  @IsNumber()
+  @Field(() => Number)
+  discountedPrice!: number;
+
+  @ApiProperty({
+    required: true,
+  })
+  @IsJSONValue()
+  @Field(() => GraphQLJSON)
+  images!: InputJsonValue;
+
+  @ApiProperty({
+    required: true,
     type: String,
   })
   @IsString()
   @Field(() => String)
   title!: string;
+
+  @ApiProperty({
+    required: true,
+    type: Number,
+  })
+  @IsNumber()
+  @Field(() => Number)
+  titlePrice!: number;
+
+  @ApiProperty({
+    required: true,
+  })
+  @IsJSONValue()
+  @Field(() => GraphQLJSON)
+  variants!: InputJsonValue;
 }
 
 export { ProductCreateInput as ProductCreateInput };

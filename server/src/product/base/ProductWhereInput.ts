@@ -14,6 +14,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { JsonFilter } from "../../util/JsonFilter";
 import { Type } from "class-transformer";
 import { IsOptional } from "class-validator";
+import { FloatFilter } from "../../util/FloatFilter";
 import { StringFilter } from "../../util/StringFilter";
 
 @InputType()
@@ -27,7 +28,29 @@ class ProductWhereInput {
   @Field(() => JsonFilter, {
     nullable: true,
   })
+  colors?: JsonFilter;
+
+  @ApiProperty({
+    required: false,
+    type: JsonFilter,
+  })
+  @Type(() => JsonFilter)
+  @IsOptional()
+  @Field(() => JsonFilter, {
+    nullable: true,
+  })
   description?: JsonFilter;
+
+  @ApiProperty({
+    required: false,
+    type: FloatFilter,
+  })
+  @Type(() => FloatFilter)
+  @IsOptional()
+  @Field(() => FloatFilter, {
+    nullable: true,
+  })
+  discountedPrice?: FloatFilter;
 
   @ApiProperty({
     required: false,
@@ -42,6 +65,17 @@ class ProductWhereInput {
 
   @ApiProperty({
     required: false,
+    type: JsonFilter,
+  })
+  @Type(() => JsonFilter)
+  @IsOptional()
+  @Field(() => JsonFilter, {
+    nullable: true,
+  })
+  images?: JsonFilter;
+
+  @ApiProperty({
+    required: false,
     type: StringFilter,
   })
   @Type(() => StringFilter)
@@ -50,6 +84,28 @@ class ProductWhereInput {
     nullable: true,
   })
   title?: StringFilter;
+
+  @ApiProperty({
+    required: false,
+    type: FloatFilter,
+  })
+  @Type(() => FloatFilter)
+  @IsOptional()
+  @Field(() => FloatFilter, {
+    nullable: true,
+  })
+  titlePrice?: FloatFilter;
+
+  @ApiProperty({
+    required: false,
+    type: JsonFilter,
+  })
+  @Type(() => JsonFilter)
+  @IsOptional()
+  @Field(() => JsonFilter, {
+    nullable: true,
+  })
+  variants?: JsonFilter;
 }
 
 export { ProductWhereInput as ProductWhereInput };

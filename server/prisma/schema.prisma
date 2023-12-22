@@ -20,9 +20,14 @@ model User {
 }
 
 model Product {
-  createdAt   DateTime @default(now())
-  description Json?
-  id          String   @id @default(cuid())
-  title       String
-  updatedAt   DateTime @updatedAt
+  colors          Json
+  createdAt       DateTime @default(now())
+  description     Json?
+  discountedPrice Float
+  id              String   @id @default(cuid())
+  images          Json
+  title           String
+  titlePrice      Float
+  updatedAt       DateTime @updatedAt
+  variants        Json
 }

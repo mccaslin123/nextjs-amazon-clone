@@ -51,11 +51,16 @@ export class ProductControllerBase {
     return await this.service.createProduct({
       data: data,
       select: {
+        colors: true,
         createdAt: true,
         description: true,
+        discountedPrice: true,
         id: true,
+        images: true,
         title: true,
+        titlePrice: true,
         updatedAt: true,
+        variants: true,
       },
     });
   }
@@ -77,11 +82,16 @@ export class ProductControllerBase {
     return this.service.products({
       ...args,
       select: {
+        colors: true,
         createdAt: true,
         description: true,
+        discountedPrice: true,
         id: true,
+        images: true,
         title: true,
+        titlePrice: true,
         updatedAt: true,
+        variants: true,
       },
     });
   }
@@ -104,11 +114,16 @@ export class ProductControllerBase {
     const result = await this.service.product({
       where: params,
       select: {
+        colors: true,
         createdAt: true,
         description: true,
+        discountedPrice: true,
         id: true,
+        images: true,
         title: true,
+        titlePrice: true,
         updatedAt: true,
+        variants: true,
       },
     });
     if (result === null) {
@@ -140,11 +155,16 @@ export class ProductControllerBase {
         where: params,
         data: data,
         select: {
+          colors: true,
           createdAt: true,
           description: true,
+          discountedPrice: true,
           id: true,
+          images: true,
           title: true,
+          titlePrice: true,
           updatedAt: true,
+          variants: true,
         },
       });
     } catch (error) {
@@ -175,11 +195,16 @@ export class ProductControllerBase {
       return await this.service.deleteProduct({
         where: params,
         select: {
+          colors: true,
           createdAt: true,
           description: true,
+          discountedPrice: true,
           id: true,
+          images: true,
           title: true,
+          titlePrice: true,
           updatedAt: true,
+          variants: true,
         },
       });
     } catch (error) {

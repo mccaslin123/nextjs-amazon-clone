@@ -11,14 +11,21 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsOptional, IsString } from "class-validator";
-import { Type } from "class-transformer";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { JsonValue } from "type-fest";
+import { IsDate, IsOptional, IsNumber, IsString } from "class-validator";
+import { Type } from "class-transformer";
 
 @ObjectType()
 class Product {
+  @ApiProperty({
+    required: true,
+  })
+  @IsJSONValue()
+  @Field(() => GraphQLJSON)
+  colors!: JsonValue;
+
   @ApiProperty({
     required: true,
   })
@@ -39,11 +46,26 @@ class Product {
 
   @ApiProperty({
     required: true,
+    type: Number,
+  })
+  @IsNumber()
+  @Field(() => Number)
+  discountedPrice!: number;
+
+  @ApiProperty({
+    required: true,
     type: String,
   })
   @IsString()
   @Field(() => String)
   id!: string;
+
+  @ApiProperty({
+    required: true,
+  })
+  @IsJSONValue()
+  @Field(() => GraphQLJSON)
+  images!: JsonValue;
 
   @ApiProperty({
     required: true,
@@ -55,11 +77,26 @@ class Product {
 
   @ApiProperty({
     required: true,
+    type: Number,
+  })
+  @IsNumber()
+  @Field(() => Number)
+  titlePrice!: number;
+
+  @ApiProperty({
+    required: true,
   })
   @IsDate()
   @Type(() => Date)
   @Field(() => Date)
   updatedAt!: Date;
+
+  @ApiProperty({
+    required: true,
+  })
+  @IsJSONValue()
+  @Field(() => GraphQLJSON)
+  variants!: JsonValue;
 }
 
 export { Product as Product };

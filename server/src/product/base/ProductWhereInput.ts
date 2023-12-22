@@ -11,14 +11,29 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { JsonFilter } from "../../util/JsonFilter";
+import { CategoryWhereUniqueInput } from "../../category/base/CategoryWhereUniqueInput";
+import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
-import { IsOptional } from "class-validator";
+import { JsonFilter } from "../../util/JsonFilter";
 import { FloatFilter } from "../../util/FloatFilter";
 import { StringFilter } from "../../util/StringFilter";
+import { OrderWhereUniqueInput } from "../../order/base/OrderWhereUniqueInput";
+import { ReviewListRelationFilter } from "../../review/base/ReviewListRelationFilter";
 
 @InputType()
 class ProductWhereInput {
+  @ApiProperty({
+    required: false,
+    type: () => CategoryWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => CategoryWhereUniqueInput)
+  @IsOptional()
+  @Field(() => CategoryWhereUniqueInput, {
+    nullable: true,
+  })
+  category?: CategoryWhereUniqueInput;
+
   @ApiProperty({
     required: false,
     type: JsonFilter,
@@ -73,6 +88,30 @@ class ProductWhereInput {
     nullable: true,
   })
   images?: JsonFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => OrderWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderWhereUniqueInput, {
+    nullable: true,
+  })
+  order?: OrderWhereUniqueInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => ReviewListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => ReviewListRelationFilter)
+  @IsOptional()
+  @Field(() => ReviewListRelationFilter, {
+    nullable: true,
+  })
+  reviews?: ReviewListRelationFilter;
 
   @ApiProperty({
     required: false,

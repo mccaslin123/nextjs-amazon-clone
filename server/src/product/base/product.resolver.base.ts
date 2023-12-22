@@ -26,6 +26,10 @@ import { ProductFindUniqueArgs } from "./ProductFindUniqueArgs";
 import { CreateProductArgs } from "./CreateProductArgs";
 import { UpdateProductArgs } from "./UpdateProductArgs";
 import { DeleteProductArgs } from "./DeleteProductArgs";
+import { ReviewFindManyArgs } from "../../review/base/ReviewFindManyArgs";
+import { Review } from "../../review/base/Review";
+import { Category } from "../../category/base/Category";
+import { Order } from "../../order/base/Order";
 import { ProductService } from "../product.service";
 @common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => Product)
@@ -92,7 +96,21 @@ export class ProductResolverBase {
   ): Promise<Product> {
     return await this.service.createProduct({
       ...args,
-      data: args.data,
+      data: {
+        ...args.data,
+
+        category: args.data.category
+          ? {
+              connect: args.data.category,
+            }
+          : undefined,
+
+        order: args.data.order
+          ? {
+              connect: args.data.order,
+            }
+          : undefined,
+      },
     });
   }
 
@@ -109,7 +127,21 @@ export class ProductResolverBase {
     try {
       return await this.service.updateProduct({
         ...args,
-        data: args.data,
+        data: {
+          ...args.data,
+
+          category: args.data.category
+            ? {
+                connect: args.data.category,
+              }
+            : undefined,
+
+          order: args.data.order
+            ? {
+                connect: args.data.order,
+              }
+            : undefined,
+        },
       });
     } catch (error) {
       if (isRecordNotFoundError(error)) {
@@ -140,5 +172,65 @@ export class ProductResolverBase {
       }
       throw error;
     }
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @graphql.ResolveField(() => [Review], { name: "reviews" })
+  @nestAccessControl.UseRoles({
+    resource: "Review",
+    action: "read",
+    possession: "any",
+  })
+  async findReviews(
+    @graphql.Parent() parent: Product,
+    @graphql.Args() args: ReviewFindManyArgs
+  ): Promise<Review[]> {
+    const results = await this.service.findReviews(parent.id, args);
+
+    if (!results) {
+      return [];
+    }
+
+    return results;
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @graphql.ResolveField(() => Category, {
+    nullable: true,
+    name: "category",
+  })
+  @nestAccessControl.UseRoles({
+    resource: "Category",
+    action: "read",
+    possession: "any",
+  })
+  async getCategory(
+    @graphql.Parent() parent: Product
+  ): Promise<Category | null> {
+    const result = await this.service.getCategory(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @graphql.ResolveField(() => Order, {
+    nullable: true,
+    name: "order",
+  })
+  @nestAccessControl.UseRoles({
+    resource: "Order",
+    action: "read",
+    possession: "any",
+  })
+  async getOrder(@graphql.Parent() parent: Product): Promise<Order | null> {
+    const result = await this.service.getOrder(parent.id);
+
+    if (!result) {
+      return null;
+    }
+    return result;
   }
 }

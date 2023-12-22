@@ -11,13 +11,34 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
+import { CategoryWhereUniqueInput } from "../../category/base/CategoryWhereUniqueInput";
+import {
+  ValidateNested,
+  IsOptional,
+  IsNumber,
+  IsString,
+} from "class-validator";
+import { Type } from "class-transformer";
 import { IsJSONValue } from "../../validators";
-import { IsOptional, IsNumber, IsString } from "class-validator";
 import { GraphQLJSON } from "graphql-type-json";
 import { InputJsonValue } from "../../types";
+import { OrderWhereUniqueInput } from "../../order/base/OrderWhereUniqueInput";
+import { ReviewUpdateManyWithoutProductsInput } from "./ReviewUpdateManyWithoutProductsInput";
 
 @InputType()
 class ProductUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: () => CategoryWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => CategoryWhereUniqueInput)
+  @IsOptional()
+  @Field(() => CategoryWhereUniqueInput, {
+    nullable: true,
+  })
+  category?: CategoryWhereUniqueInput | null;
+
   @ApiProperty({
     required: false,
   })
@@ -58,6 +79,30 @@ class ProductUpdateInput {
     nullable: true,
   })
   images?: InputJsonValue;
+
+  @ApiProperty({
+    required: false,
+    type: () => OrderWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderWhereUniqueInput, {
+    nullable: true,
+  })
+  order?: OrderWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => ReviewUpdateManyWithoutProductsInput,
+  })
+  @ValidateNested()
+  @Type(() => ReviewUpdateManyWithoutProductsInput)
+  @IsOptional()
+  @Field(() => ReviewUpdateManyWithoutProductsInput, {
+    nullable: true,
+  })
+  reviews?: ReviewUpdateManyWithoutProductsInput;
 
   @ApiProperty({
     required: false,

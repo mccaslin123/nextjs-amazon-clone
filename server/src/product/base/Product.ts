@@ -11,14 +11,32 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
+import { Category } from "../../category/base/Category";
+import {
+  ValidateNested,
+  IsOptional,
+  IsDate,
+  IsNumber,
+  IsString,
+} from "class-validator";
+import { Type } from "class-transformer";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { JsonValue } from "type-fest";
-import { IsDate, IsOptional, IsNumber, IsString } from "class-validator";
-import { Type } from "class-transformer";
+import { Order } from "../../order/base/Order";
+import { Review } from "../../review/base/Review";
 
 @ObjectType()
 class Product {
+  @ApiProperty({
+    required: false,
+    type: () => Category,
+  })
+  @ValidateNested()
+  @Type(() => Category)
+  @IsOptional()
+  category?: Category | null;
+
   @ApiProperty({
     required: true,
   })
@@ -66,6 +84,24 @@ class Product {
   @IsJSONValue()
   @Field(() => GraphQLJSON)
   images!: JsonValue;
+
+  @ApiProperty({
+    required: false,
+    type: () => Order,
+  })
+  @ValidateNested()
+  @Type(() => Order)
+  @IsOptional()
+  order?: Order | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => [Review],
+  })
+  @ValidateNested()
+  @Type(() => Review)
+  @IsOptional()
+  reviews?: Array<Review>;
 
   @ApiProperty({
     required: true,

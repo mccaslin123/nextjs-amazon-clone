@@ -26,6 +26,9 @@ import { Product } from "./Product";
 import { ProductFindManyArgs } from "./ProductFindManyArgs";
 import { ProductWhereUniqueInput } from "./ProductWhereUniqueInput";
 import { ProductUpdateInput } from "./ProductUpdateInput";
+import { ReviewFindManyArgs } from "../../review/base/ReviewFindManyArgs";
+import { Review } from "../../review/base/Review";
+import { ReviewWhereUniqueInput } from "../../review/base/ReviewWhereUniqueInput";
 
 @swagger.ApiBearerAuth()
 @common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
@@ -49,14 +52,41 @@ export class ProductControllerBase {
     @common.Body() data: ProductCreateInput
   ): Promise<Product> {
     return await this.service.createProduct({
-      data: data,
+      data: {
+        ...data,
+
+        category: data.category
+          ? {
+              connect: data.category,
+            }
+          : undefined,
+
+        order: data.order
+          ? {
+              connect: data.order,
+            }
+          : undefined,
+      },
       select: {
+        category: {
+          select: {
+            id: true,
+          },
+        },
+
         colors: true,
         createdAt: true,
         description: true,
         discountedPrice: true,
         id: true,
         images: true,
+
+        order: {
+          select: {
+            id: true,
+          },
+        },
+
         title: true,
         titlePrice: true,
         updatedAt: true,
@@ -82,12 +112,25 @@ export class ProductControllerBase {
     return this.service.products({
       ...args,
       select: {
+        category: {
+          select: {
+            id: true,
+          },
+        },
+
         colors: true,
         createdAt: true,
         description: true,
         discountedPrice: true,
         id: true,
         images: true,
+
+        order: {
+          select: {
+            id: true,
+          },
+        },
+
         title: true,
         titlePrice: true,
         updatedAt: true,
@@ -114,12 +157,25 @@ export class ProductControllerBase {
     const result = await this.service.product({
       where: params,
       select: {
+        category: {
+          select: {
+            id: true,
+          },
+        },
+
         colors: true,
         createdAt: true,
         description: true,
         discountedPrice: true,
         id: true,
         images: true,
+
+        order: {
+          select: {
+            id: true,
+          },
+        },
+
         title: true,
         titlePrice: true,
         updatedAt: true,
@@ -153,14 +209,41 @@ export class ProductControllerBase {
     try {
       return await this.service.updateProduct({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          category: data.category
+            ? {
+                connect: data.category,
+              }
+            : undefined,
+
+          order: data.order
+            ? {
+                connect: data.order,
+              }
+            : undefined,
+        },
         select: {
+          category: {
+            select: {
+              id: true,
+            },
+          },
+
           colors: true,
           createdAt: true,
           description: true,
           discountedPrice: true,
           id: true,
           images: true,
+
+          order: {
+            select: {
+              id: true,
+            },
+          },
+
           title: true,
           titlePrice: true,
           updatedAt: true,
@@ -195,12 +278,25 @@ export class ProductControllerBase {
       return await this.service.deleteProduct({
         where: params,
         select: {
+          category: {
+            select: {
+              id: true,
+            },
+          },
+
           colors: true,
           createdAt: true,
           description: true,
           discountedPrice: true,
           id: true,
           images: true,
+
+          order: {
+            select: {
+              id: true,
+            },
+          },
+
           title: true,
           titlePrice: true,
           updatedAt: true,
@@ -215,5 +311,114 @@ export class ProductControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @common.Get("/:id/reviews")
+  @ApiNestedQuery(ReviewFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Review",
+    action: "read",
+    possession: "any",
+  })
+  async findReviews(
+    @common.Req() request: Request,
+    @common.Param() params: ProductWhereUniqueInput
+  ): Promise<Review[]> {
+    const query = plainToClass(ReviewFindManyArgs, request.query);
+    const results = await this.service.findReviews(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        id: true,
+
+        product: {
+          select: {
+            id: true,
+          },
+        },
+
+        rating: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/reviews")
+  @nestAccessControl.UseRoles({
+    resource: "Product",
+    action: "update",
+    possession: "any",
+  })
+  async connectReviews(
+    @common.Param() params: ProductWhereUniqueInput,
+    @common.Body() body: ReviewWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      reviews: {
+        connect: body,
+      },
+    };
+    await this.service.updateProduct({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/reviews")
+  @nestAccessControl.UseRoles({
+    resource: "Product",
+    action: "update",
+    possession: "any",
+  })
+  async updateReviews(
+    @common.Param() params: ProductWhereUniqueInput,
+    @common.Body() body: ReviewWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      reviews: {
+        set: body,
+      },
+    };
+    await this.service.updateProduct({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/reviews")
+  @nestAccessControl.UseRoles({
+    resource: "Product",
+    action: "update",
+    possession: "any",
+  })
+  async disconnectReviews(
+    @common.Param() params: ProductWhereUniqueInput,
+    @common.Body() body: ReviewWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      reviews: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateProduct({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }
